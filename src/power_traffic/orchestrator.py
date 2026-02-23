@@ -15,7 +15,7 @@ from .precheck import check_background_traffic
 from .ssh_exec import SSHExecutionError, run_powershell
 
 
-@dataclass(slots=True)
+@dataclass
 class HostRunResult:
     host: str
     status: str
