@@ -7,7 +7,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from .config import CampaignConfig, HostConfig
@@ -58,7 +58,7 @@ def wait_until_next_daily(daily_start_iso: str) -> None:
     now = datetime.now(tz=start.tzinfo)
     target = datetime.combine(now.date(), start.time(), tzinfo=start.tzinfo)
     if now >= target:
-        target = target.replace(day=target.day + 1)
+        target = target + timedelta(days=1)
     delay = (target - now).total_seconds()
     if delay > 0:
         time.sleep(delay)
@@ -150,7 +150,8 @@ def _run_for_host(
 
 def _print_status_table(results: list[HostRunResult]) -> None:
     """Print current status table to console."""
-    sys.stdout.write("\033[2J\033[H")
+    if sys.stdout.isatty():
+        sys.stdout.write("\033[2J\033[H")
     sys.stdout.write(f"{'Host':<20} {'Status':<25} {'Server':<20} {'Attempts':<10} {'Bg Mbps':<10} {'Meas Mbps':<12}\n")
     sys.stdout.write("-" * 100 + "\n")
     for r in results:

@@ -16,7 +16,9 @@ class BackgroundCheckResult:
 
 def check_background_traffic(host: HostConfig, cfg: CampaignConfig) -> BackgroundCheckResult:
     script = f"""
-$samples = Get-Counter -Counter '\\Network Interface(*)\\Bytes Total/sec' -SampleInterval 1 -MaxSamples {cfg.background_window_minutes * 60}
+$all_interfaces = Get-Counter -ListSet 'Network Interface' | Select-Object -ExpandProperty Paths
+$interface = $all_interfaces | Where-Object {{ $_ -notmatch 'Loopback|Isatap|Teredo|Hyper-V' }} | Select-Object -First 1
+$samples = Get-Counter -Counter "\\Network Interface($($interface))\\Bytes Total/sec" -SampleInterval 1 -MaxSamples {cfg.background_window_minutes * 60}
 $values = $samples.CounterSamples | Measure-Object -Property CookedValue -Average
 $mbps = [math]::Round(($values.Average * 8 / 1MB), 4)
 Write-Output $mbps
