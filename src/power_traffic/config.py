@@ -63,7 +63,10 @@ def _validate_time(value: str, field_name: str) -> None:
     try:
         datetime.fromisoformat(value)
     except ValueError as exc:
-        raise ValueError(f"{field_name} must be ISO-8601 datetime") from exc
+        # Для daily_start_time допустим формат HH:MM:SS+TZ
+        if ":" in value and "T" not in value:
+            return
+        raise ValueError(f"{field_name} must be ISO-8601 datetime or HH:MM:SS+TZ for daily schedule") from exc
 
 
 def load_config(path: str | Path) -> CampaignConfig:
