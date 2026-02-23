@@ -1,0 +1,41 @@
+campaign:
+  campaign_start_time: "2026-02-23T12:00:00+03:00"
+  max_concurrent_hosts: 20
+  retry_count: 3
+  retry_cooldown_seconds: 30
+  background_busy_cooldown_seconds: 120
+  continue_on_host_failure: true
+  random_server_selection: true
+  schedule:
+    daily_start_time: "12:00:00+03:00"
+    continuous_mode: true
+    status_update_interval_seconds: 5
+
+traffic:
+  target_rate_mbps: 80
+  tolerance_percent: 10
+  test_duration_seconds: 120
+
+precheck:
+  background_limit_mbps: 10
+  background_window_minutes: 3
+
+inventory:
+  iperf3_servers:
+    - "10.100.0.10"
+    - "10.100.0.11"
+    - "10.100.0.12"
+  hosts:
+    - name: "host-001"
+      address: "10.200.0.21"
+      user: "traffic_user"
+      ssh_key_path: "/opt/power_traffic/keys/host-001"
+      iperf3_path: "C:\\Tools\\iperf3\\iperf3.exe"
+      ssh_port: 22
+    - name: "host-002"
+      address: "10.200.0.22"
+      user: "traffic_user"
+      ssh_key_path: "/opt/power_traffic/keys/host-002"
+      iperf3_path: "C:\\Tools\\iperf3\\iperf3.exe"
+      ssh_port: 22
+
